@@ -1,3 +1,5 @@
+<script src="https://kit.fontawesome.com/882b973bb7.js" crossorigin="anonymous"></script>
+
 <div class="container">
   <div class="row">
     <div class="col-md-3">
@@ -19,6 +21,40 @@
           <% end %>
         </tr>
       </table>
+      <% if @book.favorited_by?(current_user) %>
+        <p>
+        <%= link_to book_favorites_path(@book), method: :delete do %>
+          <span class="fas fa-heart nav-link text-light" aria-hidden="true"> いいね外す</span>
+          <%= @book.favorites.count %>
+        <% end %>
+        </p>
+        <% else %>
+        <p>
+          <%= link_to book_favorites_path(@book), method: :post do %>
+            <span class="fas fa-heart nav-link text-light" aria-hidden="true"> いいねする</span>
+            <%= @book.favorites.count %>
+          <% end %>
+        </p>
+      <% end %>
+    </div>
+    <div>
+      <p>コメント件数：<%= @book.book_comments.count %></p>
+      <% @book.book_comments.each do |book_comment| %>
+        <p><%= image_tag('no_image.jpg') %></p>
+        <%= book_comment.user.name %>
+        <%= book_comment.created_at.strftime('%Y/%m/%d') %><%= book_comment.comment %>
+        <% if book_comment.user == current_user %>
+        <div>
+          <%= link_to "Destroy", book_book_comment_path(book_comment.book, book_comment), method: :delete %>
+        </div>
+        <% end %>
+      <% end %>
+    </div>
+    <div>
+      <%= form_with(model:[@book, @book_comment], local: true) do |form| %>
+      <%= form.text_area :comment, rows:'5',placeholder: "コメントをここに" %>
+      <%= form.submit "送信する" %>
+      <% end %>
     </div>
   </div>
 </div>
